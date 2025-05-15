@@ -10,7 +10,6 @@ main_window=QWidget()
 main_window.setWindowTitle("Random")
 main_window.resize(300,200)
 
-
 #Create all App Objects
 title = QLabel("Random Words")
 
