@@ -6,7 +6,7 @@ from PyQt5.QtWidgets import QApplication, QWidget, QLabel, QPushButton, QVBoxLay
 
 # Main App Objects and Settings
 app = QApplication([])
-main_window=QWidget()
+main_window = QWidget()
 main_window.setWindowTitle("pyCalculator")
 main_window.resize(300,300)
 
@@ -24,10 +24,10 @@ delete= QPushButton('Delete')
 
 def button_clicked():
  button = app.sender()
- text=button.text()
+ text = button.text()
 
  if text == '=':
-  symbol= text_box.text()
+  symbol = text_box.text()
   try:
    res = eval(symbol)
    text_box.setText(str(res))
@@ -61,7 +61,7 @@ master_layout = QVBoxLayout()
 master_layout.addWidget(text_box)
 master_layout.addLayout(grid)
 
-button_row =QHBoxLayout()
+button_row = QHBoxLayout()
 button_row.addWidget(clear)
 button_row.addWidget(delete)
 
