@@ -13,6 +13,7 @@ from PyQt5.QtWidgets import (
 )
 from PyQt5.QtCore import Qt
 from PyQt5.QtGui import QPixmap
+from PIL import Image, ImageFilter, ImageEnhance
 
 
 # App Settings
@@ -98,7 +99,104 @@ def getWorkDirectory():
         file_list.addItem(filename)
 
 
+class Editor:
+    def __init__(self):
+        self.image = None
+        self.original = None
+        self.filename = None
+        self.save_folder = "edits/"
+
+    def load_image(self, filename):
+        self.filename = filename
+        fullname = os.path.join(working_directory, self.filename)
+        self.image = Image.open(fullname)
+        self.original = self.image.copy()
+
+    def save_image(self):
+        path = os.path.join(working_directory, self.save_folder)
+        if not (os.path.exists(path) or os.path.isdir(path)):
+            os.mkdir(path)
+
+        fullname = os.path.join(path, self.filename)
+        self.image.save(fullname)
+
+    def show_image(self, path):
+        pic_box.hide()
+        image = QPixmap(path)
+        w, h = pic_box.width(), pic_box.height()
+        image = image.scaled(w, h, Qt.KeepAspectRatio)
+        pic_box.setPixmap(image)
+        pic_box.show()
+
+    def gray(self):
+        self.image = self.image.convert("L")
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def left(self):
+        self.image = self.image.transpose(Image.ROTATE_90)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def right(self):
+        self.image = self.image.transpose(Image.ROTATE_270)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def mirror(self):
+        self.image = self.image.transpose(Image.FLIP_LEFT_RIGHT)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def sharpen(self):
+        self.image = self.image.filter(ImageFilter.SHARPEN)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def blur(self):
+        self.image = self.image.filter(ImageFilter.BLUR)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def color(self):
+        self.image = ImageEnhance.Color(self.image).enhance(1.2)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+    def contrast(self):
+        self.image = ImageEnhance.Contrast(self.image).enhance(1.2)
+        self.save_image()
+        image_path = os.path.join(working_directory, self.save_folder, self.filename)
+        self.show_image(image_path)
+
+
+def displayImage():
+    if file_list.currentRow() >= 0:
+        filename = file_list.currentItem().text()
+        main.load_image(filename)
+        main.show_image(os.path.join(working_directory, main.filename))
+
+
+main = Editor()
+
 btn_folder.clicked.connect(getWorkDirectory)
+file_list.currentRowChanged.connect(displayImage)
+
+gray.clicked.connect(main.gray)
+btn_left.clicked.connect(main.left)
+btn_right.clicked.connect(main.right)
+sharpness.clicked.connect(main.sharpen)
+saturation.clicked.connect(main.color)
+mirror.clicked.connect(main.mirror)
+contrast.clicked.connect(main.contrast)
+blur.clicked.connect(main.blur)
 
 
 main_window.show()
